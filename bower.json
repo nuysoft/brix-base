@@ -1,6 +1,11 @@
 {
   "name": "brix-base",
   "version": "0.0.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
   "dependencies": {
     "requirejs": "~2.1.15",
     "jquery": "~2.1.1",
