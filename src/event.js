@@ -3,7 +3,7 @@
 
 define(
     [
-        'loader/loader', 'jquery', 'underscore'
+        'loader', 'jquery', 'underscore'
     ],
     function(
         Loader, jQuery, _
