@@ -116,7 +116,7 @@ define(
                         extra.currentTarget = event.currentTarget
 
                         var handler = jQuery(event.currentTarget).attr(name)
-                        console.log(event.type, handler, event.delegateTarget)
+                        // console.log(event.type, handler, event.delegateTarget)
                         var parts = Options.parseFnAndParams(handler)
                         if (parts) {
                             if (parts.fn in instance) {
