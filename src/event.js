@@ -11,7 +11,7 @@ define(
         /*
             _.extend(Brix.prototype, Event)
         */
-        var Options = Loader.Options
+        var Util = Loader.Util
         var Constant = Loader.Constant
 
         return {
@@ -71,7 +71,7 @@ define(
         }
 
         function delegateBxTypeEvents(instance, element, deep) {
-            var types = Options.parseBxTypes(element, deep)
+            var types = parseBxTypes(element, deep)
             _.each(types, function(type /*, index*/ ) {
                 var name = Constant.PREFIX + type // 'bx-' + type
                 var selector = '[' + name + ']'
@@ -116,8 +116,8 @@ define(
                         extra.currentTarget = event.currentTarget
 
                         var handler = jQuery(event.currentTarget).attr(name)
-                        // console.log(event.type, handler, event.delegateTarget)
-                        var parts = Options.parseFnAndParams(handler)
+                            // console.log(event.type, handler, event.delegateTarget)
+                        var parts = parseFnAndParams(handler)
                         if (parts) {
                             if (parts.fn in instance) {
                                 instance[parts.fn].apply(
@@ -138,13 +138,101 @@ define(
         }
 
         function undelegateBxTypeEvents(instance, deep) {
-            var types = Options.parseBxTypes(instance.element, deep)
+            var types = parseBxTypes(instance.element, deep)
             _.each(types, function(type /*, index*/ ) {
                 var name = Constant.PREFIX + type
                 var selector = '[' + name + ']'
                 if (deep) jQuery(instance.element).off(type + Constant.COMPONENT_NAMESPACE, selector)
                 else jQuery(instance.element).off(type + Constant.COMPONENT_NAMESPACE)
             })
+        }
+
+        /**
+         * 解析 bx-type 风格的事件配置
+         * @param  {element} 一个 DOM 元素
+         * @param  {boolean} 是否进行深度查找
+         * @return {array}
+         *      [
+         *        {
+         *          target:
+         *          type:
+         *          handler:
+         *          fn:
+         *          params:
+         *        },
+         *      ]
+         */
+        function parseBxEvents(element, deep) {
+            // 数组 or 伪数组
+            if (!element.nodeType && element.length) element = element[0]
+            var elements = deep ? element.getElementsByTagName('*') : [element]
+            var events = []
+            Util.each(elements, function(item /*, index*/ ) {
+                Util.each(item.attributes, function(attribute) {
+                    Constant.RE_EVENT.exec('') // rest lastIndex
+                    var ma = Constant.RE_EVENT.exec(attribute.name)
+                    if (!ma) return
+                    var handleObj = {
+                        target: item,
+                        type: ma[1],
+                        handler: attribute.value
+                    }
+                    Util.extend(handleObj, parseFnAndParams(attribute.value))
+                    events.push(handleObj)
+                })
+            })
+            return events
+        }
+
+        /**
+         * 解析 bx-type 风格的事件类型
+         * @param  {element} 一个 DOM 元素
+         * @param  {boolean} 是否进行深度查找
+         * @return {array}
+         *      [ 'click', 'change', ... ]
+         */
+        function parseBxTypes(element, deep) {
+            return Util.unique(
+                Util.map(
+                    // [ { target type handler fn params }, ... ]
+                    parseBxEvents(element, deep),
+                    function(item) {
+                        return item.type
+                    }
+                )
+            )
+        }
+
+        /**
+         * 解析函数名称和参数值
+         * @param  {string} 表达式。
+         * @return {object}
+         *      {
+         *          fn:
+         *          params:
+         *      }
+         */
+        function parseFnAndParams(handler) {
+            var parts = Constant.FN_ARGS.exec(handler)
+            var fn
+            var params
+            if (parts && parts[1]) {
+                fn = parts[1]
+                params = parts[2] || ''
+                try {
+                    // 1. 尝试保持参数的类型 
+                    /* jshint -W061 */
+                    params = eval('(function(){ return [].splice.call(arguments, 0 ) })(' + params + ')')
+                } catch (error) {
+                    // 2. 如果失败，只能解析为字符串
+                    params = parts[2].split(/,\s*/)
+                }
+                return {
+                    fn: fn,
+                    params: params
+                }
+            }
+            return {}
         }
 
     }

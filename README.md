@@ -1,2 +1,3 @@
-brix-base
+Brix Base
 =========
+
