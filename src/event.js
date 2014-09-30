@@ -169,7 +169,7 @@ define(
             var events = []
             Util.each(elements, function(item /*, index*/ ) {
                 Util.each(item.attributes, function(attribute) {
-                    Constant.RE_EVENT.exec('') // rest lastIndex
+                    Constant.RE_EVENT.exec('') // reset lastIndex to 0
                     var ma = Constant.RE_EVENT.exec(attribute.name)
                     if (!ma) return
                     var handleObj = {
