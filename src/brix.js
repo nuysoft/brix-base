@@ -53,6 +53,8 @@ define(
             // later.
             child.__super__ = parent.prototype
 
+            child.extend = Brix.extend
+
             return child
         }
 
