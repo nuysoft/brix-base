@@ -32,6 +32,11 @@ define(
                 child = function() {
                     return parent.apply(this, arguments)
                 }
+                // rename function name
+                // var name = arguments.callee.caller.arguments.callee.caller.arguments[0].replace(/[^a-zA-Z]/g, '_')
+                // child = new Function('doit', 'return function ' + name + '() { doit() }')(function() {
+                //     return parent.apply(this, arguments)
+                // })
             }
 
             // Add static properties to the constructor function, if supplied.
