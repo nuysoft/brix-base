@@ -9,7 +9,7 @@ define(
         Loader, jQuery, _
     ) {
         /*
-            _.extend(Brix.prototype, Event)
+            使用：`_.extend(Brix.prototype, Event)`
         */
         var Util = Loader.Util
         var Constant = Loader.Constant
@@ -93,7 +93,8 @@ define(
                 // 开胃菜
                 function appetizer(event) {
                     if (jQuery(event.target).closest('.disabled').length) return
-                    event.preventDefault()
+
+                    // event.preventDefault()
                     // 平行的事件，只触发一次
                     if (!event.originalEvent._triggered) {
                         event.originalEvent._triggered = true
@@ -110,9 +111,10 @@ define(
                 function entrees(event, extra) { // extraParameters
                     // TODO 检测命名空间 event.namespace_re.test
                     if (extra) {
-                        event._triggered = true
-                        // 依然使用原来的事件对象。
-                        // 因为手动触发的事件会缺少很多属性，例如 jQuery.event.keyHooks/mouseHooks.props，以及更重要的 originalEvent。
+                        /*
+                            依然复用原来的事件对象。
+                            因为手动触发的事件会缺少很多属性，例如 jQuery.event.keyHooks/mouseHooks.props，以及更重要的 originalEvent。
+                         */
                         extra.currentTarget = event.currentTarget
 
                         var handler = jQuery(event.currentTarget).attr(name)
@@ -123,14 +125,18 @@ define(
                                 instance[parts.fn].apply(
                                     instance, [extra].concat(parts.params)
                                 )
+                                // 同步状态
+                                if (extra.isDefaultPrevented()) event.preventDefault()
+                                if (extra.isPropagationStopped()) event.stopPropagation()
+                                if (extra.isImmediatePropagationStopped()) event.stopImmediatePropagation()
                             } else {
                                 /* jshint evil:true */
                                 eval(handler)
                             }
                         }
-                        event.preventDefault()
-                        event.stopPropagation()
-
+                        // 不主动 preventDefault 和 stopPropagation，避免事件丢失
+                        // event.preventDefault()
+                        // event.stopPropagation()
                     }
                 }
 
@@ -178,7 +184,14 @@ define(
                         handler: attribute.value
                     }
                     Util.extend(handleObj, parseFnAndParams(attribute.value))
+
+                    // 避免重复代理
+                    if (item._bx_events && item._bx_events[handleObj.type]) return
+
                     events.push(handleObj)
+
+                    if (!item._bx_events) item._bx_events = {}
+                    item._bx_events[handleObj.type] = true
                 })
             })
             return events
