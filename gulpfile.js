@@ -19,8 +19,12 @@ gulp.task('jshint', function() {
 gulp.task('rjs', function() {
     var build = {
         baseUrl: 'src',
+        name: 'brix/base',
         out: 'dist/base.js',
-        name: 'brix/base'
+        paths: {
+            underscore: 'empty:',
+            'brix/event': 'empty:'
+        }
     }
     rjs(build)
         .pipe(gulp.dest('.')) // pipe it to the output DIR

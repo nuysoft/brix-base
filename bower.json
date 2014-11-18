@@ -5,9 +5,8 @@
     "**/.*"
   ],
   "dependencies": {
-    "requirejs": "*",
-    "jquery": "*",
-    "underscore": "*"
+    "underscore": "*",
+    "brix-event": "*"
   },
   "devDependencies": {}
 }
