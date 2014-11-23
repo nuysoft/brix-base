@@ -1,4 +1,4 @@
-/* global require */
+/* global require, console */
 var gulp = require('gulp')
 var jshint = require('gulp-jshint')
 var rjs = require('gulp-requirejs')
@@ -6,7 +6,20 @@ var rjs = require('gulp-requirejs')
 var globs = [
     'src/**/*.js', 'test/*.js', 'gulpfile.js'
 ]
-var watchTasks = ['jshint', 'rjs']
+var watchTasks = ['hello', 'jshint', 'rjs']
+
+gulp.task('hello', function() {
+    console.log((function() {
+        /*
+______        _        ______                   
+| ___ \      (_)       | ___ \                  
+| |_/ / _ __  _ __  __ | |_/ /  __ _  ___   ___ 
+| ___ \| '__|| |\ \/ / | ___ \ / _` |/ __| / _ \
+| |_/ /| |   | | >  <  | |_/ /| (_| |\__ \|  __/
+\____/ |_|   |_|/_/\_\ \____/  \__,_||___/ \___|
+        */
+    }).toString().split('\n').slice(2, -2).join('\n') + '\n')
+})
 
 // https://github.com/spenceralger/gulp-jshint
 gulp.task('jshint', function() {
@@ -22,6 +35,7 @@ gulp.task('rjs', function() {
         name: 'brix/base',
         out: 'dist/base.js',
         paths: {
+            jquery: 'empty:',
             underscore: 'empty:',
             'brix/event': 'empty:'
         }
