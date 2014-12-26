@@ -5,7 +5,7 @@
     "**/.*"
   ],
   "dependencies": {
-    "jquery": "*",
+    "jquery": "1.x.x",
     "underscore": "*"
   },
   "devDependencies": {}
