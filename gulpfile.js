@@ -2,6 +2,7 @@
 var gulp = require('gulp')
 var jshint = require('gulp-jshint')
 var rjs = require('gulp-requirejs')
+var exec = require('child_process').exec
 
 var globs = [
     'src/**/*.js', 'test/*.js', 'gulpfile.js'
@@ -46,6 +47,22 @@ gulp.task('rjs', function() {
 
 gulp.task('watch', function( /*callback*/ ) {
     gulp.watch(globs, watchTasks)
+})
+
+// https://github.com/pahen/madge
+gulp.task('madge', function( /*callback*/ ) {
+    exec('madge --format amd ./src/',
+        function(error, stdout /*, stderr*/ ) {
+            if (error) console.log('exec error: ' + error)
+            console.log('module dependencies:')
+            console.log(stdout)
+        }
+    )
+    exec('madge --format amd --image ./doc/dependencies.png ./src/',
+        function(error /*, stdout, stderr*/ ) {
+            if (error) console.log('exec error: ' + error)
+        }
+    )
 })
 
 gulp.task('default', watchTasks.concat(['watch']))

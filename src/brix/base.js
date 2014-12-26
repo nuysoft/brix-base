@@ -1,10 +1,10 @@
 /* global define */
 define(
     [
-        'jquery', 'underscore', 'brix/event'
+        'jquery', 'underscore'
     ],
     function(
-        jQuery, _, Event
+        jQuery, _
     ) {
         /*
             ## Base
@@ -26,9 +26,7 @@ define(
                 ## .render( [ callback( error, instance ) ] )
                 渲染组件。
             */
-            render: function(callback) {
-                if (callback) callback(undefined, this)
-            },
+            render: function() {},
             /*
                 ## .destroy
                 销毁组件。
@@ -71,8 +69,6 @@ define(
                 return this
             }
         }
-
-        _.extend(Base.prototype, Event)
 
         /*
             Backbone.js
