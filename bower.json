@@ -2,7 +2,14 @@
   "name": "brix-base",
   "version": "0.0.5",
   "ignore": [
-    "**/.*"
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "src",
+    "test",
+    "doc",
+    "package.json",
+    "gulpfile.js"
   ],
   "dependencies": {
     "jquery": "1.x.x",
