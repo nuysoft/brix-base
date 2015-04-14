@@ -32,7 +32,11 @@ define(
                 ## .destroy
                 销毁组件。
             */
-            destroy: function() {},
+            destroy: function() {
+                // 自动移除组件节点和关联节点
+                // jQuery(this.element).remove()
+                // jQuery(this.relatedElement || this.$relatedElement).remove()
+            },
             /*
                 在当前组件（关联的元素）上，为一个或多个事件类型绑定一个事件监听函数。
                 在内部，Brix 上的事件方法通过调用第三方库（例如 jQuery、KISSY 等）的事件绑定方法来实现。
@@ -58,18 +62,37 @@ define(
             /*
                 在当前组件（关联的元素）上，执行所有绑定的事件监听函数和默认行为，并模拟冒泡过程。
             */
-            trigger: function(type, data) {
-                jQuery(this.relatedElement || this.$relatedElement || this.element || this).trigger(type, data)
+            trigger: function(event, data) {
+                // ( event, data ), ( type, data )
+                event = event.type ? event : jQuery.Event(event)
+                event.component = this
+                jQuery(this.relatedElement || this.$relatedElement || this.element || this).trigger(event, data)
                 return this
             },
             /*
                 在当前组件（关联的元素）上，执行所有绑定的事件监听函数，并模拟冒泡过程，但不触发默认行为。
             */
-            triggerHandler: function(type, data) {
-                jQuery(this.relatedElement || this.$relatedElement || this.element || this).triggerHandler(type, data)
+            triggerHandler: function(event, data) {
+                // ( event, data ), ( type, data )
+                event = event.type ? event : jQuery.Event(event)
+                event.component = this
+                jQuery(this.relatedElement || this.$relatedElement || this.element || this).triggerHandler(event, data)
                 return this
             }
         }
+
+        jQuery.fn.extend({
+            triggerWithComponent: function(component, event, data) {
+                event = event.type ? event : jQuery.Event(event)
+                event.component = component
+                return this.trigger(event, data)
+            },
+            triggerHandlerWithComponent: function(component, event, data) {
+                event = event.type ? event : jQuery.Event(event)
+                event.component = component
+                return this.triggerHandler(event, data)
+            }
+        })
 
         /*
             Backbone.js
