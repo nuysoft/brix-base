@@ -81,19 +81,6 @@ define(
             }
         }
 
-        jQuery.fn.extend({
-            triggerWithComponent: function(component, event, data) {
-                event = event.type ? event : jQuery.Event(event)
-                event.component = component
-                return this.trigger(event, data)
-            },
-            triggerHandlerWithComponent: function(component, event, data) {
-                event = event.type ? event : jQuery.Event(event)
-                event.component = component
-                return this.triggerHandler(event, data)
-            }
-        })
-
         /*
             Backbone.js
             http://backbonejs.org
