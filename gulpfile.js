@@ -1,13 +1,15 @@
 /* global require, console */
 var gulp = require('gulp')
+var through = require('through2')
 var jshint = require('gulp-jshint')
 var rjs = require('gulp-requirejs')
+var uglify = require('gulp-uglify')
 var exec = require('child_process').exec
 
 var globs = [
     'src/**/*.js', 'test/*.js', 'gulpfile.js'
 ]
-var watchTasks = ['hello', 'jshint', 'rjs']
+var watchTasks = ['hello', 'jshint', 'rjs', 'compress']
 
 gulp.task('hello', function() {
     console.log((function() {
@@ -43,6 +45,22 @@ gulp.task('rjs', function() {
     }
     rjs(build)
         .pipe(gulp.dest('.')) // pipe it to the output DIR
+})
+
+// https://github.com/terinjokes/gulp-uglify
+gulp.task('compress', function() {
+    gulp.src(['dist/**.js','!dist/**-debug.js'])
+        .pipe(through.obj(function(file, encoding, callback) { /* jshint unused:false */
+            file.path = file.path.replace(
+                '.js',
+                '-debug.js'
+            )
+            callback(null, file)
+        }))
+        .pipe(gulp.dest('dist/'))
+    gulp.src('dist/**.js')
+        .pipe(uglify())
+        .pipe(gulp.dest('dist/'))
 })
 
 gulp.task('watch', function( /*callback*/ ) {
