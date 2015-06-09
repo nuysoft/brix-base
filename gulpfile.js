@@ -58,7 +58,7 @@ gulp.task('compress', function() {
             callback(null, file)
         }))
         .pipe(gulp.dest('dist/'))
-    gulp.src('dist/**.js')
+    gulp.src(['dist/**.js','!dist/**-debug.js'])
         .pipe(uglify())
         .pipe(gulp.dest('dist/'))
 })
