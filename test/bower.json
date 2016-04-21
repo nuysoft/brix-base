@@ -1,0 +1,12 @@
+{
+  "name": "test",
+  "dependencies": {},
+  "devDependencies": {
+    "requirejs": "*",
+    "mocha": "*",
+    "chai": "*",
+    "underscore": "*",
+    "jquery": "~2.1.1",
+    "brix-loader": "master"
+  }
+}
