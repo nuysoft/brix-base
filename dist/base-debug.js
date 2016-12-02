@@ -84,27 +84,30 @@ define('brix/base/util',[],function() {
 /* global define */
 define('brix/base/extend',['./util'], function(_) {
 	/*
-	    Backbone.js
+	    This function is loosely inspired by Backbone.js.
 	    http://backbonejs.org
 	 */
 	function extend(protoProps, staticProps) {
 		var parent = this
 
-		// 构造函数
+		// 构造函数 Initialize constructor
 		var constructor = protoProps && protoProps.hasOwnProperty('constructor') ?
-			protoProps.constructor : // 自定义构造函数
-			parent // 父类构造函数
+			protoProps.constructor : // 自定义构造函数 Custom constructor
+			parent // 父类构造函数 Base constructor
 
-		// 子类
+		// 子类 Subclass
 		var child = function() {
 			var instance = constructor.apply(this, arguments) || this
 
-			// instance.options vs options
+			// instance.options vs parameter options 
 			var options = arguments[0]
 			if (options && !instance.hasOwnProperty('options')) {
 				instance.options = _.extend(true, {}, this.options, options)
 			}
 
+			// 如果模块带有 __x_created_with，则一切初始化行为都交给第三方；否则调用 .create() 方法。
+			// If the child module has a property named as __x_created_with, the third-library will be response for the rest of initialization actions.
+			// If not, the child module will call the `.create()`.
 			if (!child.__x_created_with && instance.created) {
 				instance.created.apply(instance, instance.created.length ? [instance.options] : [])
 			}
@@ -112,20 +115,20 @@ define('brix/base/extend',['./util'], function(_) {
 			return instance
 		}
 
-		// 静态属性
+		// 静态属性 Static properties
 		_.extend(child, parent, staticProps)
 
-		// 原型链
+		// 原型链 Build prototype chain.
 		var Surrogate = function() {
 			this.constructor = constructor
 		}
 		Surrogate.prototype = parent.prototype
 		child.prototype = new Surrogate()
 
-		// 原型属性
+		// 原型属性 Copy prototype properties from the parameter protoProps to the prototype of child
 		if (protoProps) _.extend(child.prototype, protoProps)
 
-		// __super__
+		// Add keyword __super__
 		child.__super__ = parent.prototype
 
 		child.extend = extend
@@ -156,6 +159,19 @@ define(
         Base.prototype = {
             // 是否 Brix 组件
             isBrix: true,
+            /*
+                ## .constructor()
+                自定义构造函数
+             */
+            /*    
+                ## .created()
+                通过关键字 new 创建实例后，该方法被调用，内部自动调用 `.init()` 和 `.render()`。
+                如果通过 Brix Loader 加载，则不会调用该方法。
+             */
+            created: function() {
+                if (this.init) this.init()
+                if (this.render) this.render()
+            },
             /*
                 ## .init()
                 初始化组件。

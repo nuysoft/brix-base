@@ -20,6 +20,19 @@ define(
             // 是否 Brix 组件
             isBrix: true,
             /*
+                ## .constructor()
+                自定义构造函数
+             */
+            /*    
+                ## .created()
+                通过关键字 new 创建实例后，该方法被调用，内部自动调用 `.init()` 和 `.render()`。
+                如果通过 Brix Loader 加载，则不会调用该方法。
+             */
+            created: function() {
+                if (this.init) this.init()
+                if (this.render) this.render()
+            },
+            /*
                 ## .init()
                 初始化组件。
             */

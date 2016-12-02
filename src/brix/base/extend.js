@@ -23,8 +23,8 @@ define(['./util'], function(_) {
 			}
 
 			// 如果模块带有 __x_created_with，则一切初始化行为都交给第三方；否则调用 .create() 方法。
-			// If the module child has the property named as __x_created_with, the third library will be response for the rest of initialization actions.
-			// If not, the module child will call the function .create().
+			// If the child module has a property named as __x_created_with, the third-library will be response for the rest of initialization actions.
+			// If not, the child module will call the `.create()`.
 			if (!child.__x_created_with && instance.created) {
 				instance.created.apply(instance, instance.created.length ? [instance.options] : [])
 			}
