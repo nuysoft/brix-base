@@ -96,10 +96,10 @@ describe('Brix Base', function() {
     function glog(task) {
         return function(done) {
             var test = this.test
-            console.group(test.title)
+            console.log('>>> ' + test.title) // 不用 console.group，因为在 phantomjs 无法显示。
             task(function() {
+                console.log('<<< ' + test.title)
                 done()
-                console.groupEnd(test.title)
             })
         }
     }
