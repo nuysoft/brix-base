@@ -2,6 +2,7 @@
 var gulp = require('gulp')
 var through = require('through2')
 var jshint = require('gulp-jshint')
+var mochaPhantomJS = require('gulp-mocha-phantomjs')
 var rjs = require('gulp-requirejs')
 var uglify = require('gulp-uglify')
 var exec = require('child_process').exec
@@ -9,7 +10,7 @@ var exec = require('child_process').exec
 var globs = [
     'src/**/*.js', 'test/*.js', 'gulpfile.js'
 ]
-var watchTasks = ['hello', 'jshint', 'rjs', 'compress']
+var watchTasks = ['hello', 'madge', 'jshint', 'mocha', 'rjs', 'compress']
 
 gulp.task('hello', function() {
     console.log((function() {
@@ -31,6 +32,14 @@ gulp.task('jshint', function() {
         .pipe(jshint.reporter('jshint-stylish'))
 })
 
+// https://github.com/mrhooray/gulp-mocha-phantomjs
+gulp.task('mocha', function() {
+    return gulp.src('test/*.html')
+        .pipe(mochaPhantomJS({
+            reporter: 'spec'
+        }))
+})
+
 // https://github.com/RobinThrift/gulp-requirejs
 gulp.task('rjs', function() {
     var build = {
@@ -49,7 +58,7 @@ gulp.task('rjs', function() {
 
 // https://github.com/terinjokes/gulp-uglify
 gulp.task('compress', function() {
-    gulp.src(['dist/**.js','!dist/**-debug.js'])
+    gulp.src(['dist/**.js', '!dist/**-debug.js'])
         .pipe(through.obj(function(file, encoding, callback) { /* jshint unused:false */
             file.path = file.path.replace(
                 '.js',
@@ -58,7 +67,7 @@ gulp.task('compress', function() {
             callback(null, file)
         }))
         .pipe(gulp.dest('dist/'))
-    gulp.src(['dist/**.js','!dist/**-debug.js'])
+    gulp.src(['dist/**.js', '!dist/**-debug.js'])
         .pipe(uglify())
         .pipe(gulp.dest('dist/'))
 })

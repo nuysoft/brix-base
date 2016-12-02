@@ -1,10 +1,12 @@
 /* global define */
 define(
     [
-        'jquery', 'underscore'
+        './base/extend',
+        'jquery'
     ],
     function(
-        jQuery, _
+        extend,
+        jQuery
     ) {
         /*
             ## Base
@@ -17,6 +19,19 @@ define(
         Base.prototype = {
             // 是否 Brix 组件
             isBrix: true,
+            /*
+                ## .constructor()
+                自定义构造函数
+             */
+            /*    
+                ## .created()
+                通过关键字 new 创建实例后，该方法被调用，内部自动调用 `.init()` 和 `.render()`。
+                如果通过 Brix Loader 加载，则不会调用该方法。
+             */
+            created: function() {
+                if (this.init) this.init()
+                if (this.render) this.render()
+            },
             /*
                 ## .init()
                 初始化组件。
@@ -80,54 +95,7 @@ define(
             }
         }
 
-        /*
-            Backbone.js
-            http://backbonejs.org
-         */
-        Base.extend = function(protoProps, staticProps) {
-            var parent = this
-            var child
-
-            // The constructor function for the new subclass is either defined by you
-            // (the "constructor" property in your `extend` definition), or defaulted
-            // by us to simply call the parent's constructor.
-            if (protoProps && _.has(protoProps, 'constructor')) {
-                child = protoProps.constructor
-            } else {
-                child = function() {
-                    return parent.apply(this, arguments)
-                }
-
-                // rename function name
-                // var name = arguments.callee.caller.arguments.callee.caller.arguments[0].replace(/[^a-zA-Z]/g, '_')
-                // child = new Function('doit', 'return function ' + name + '() { doit() }')(function() {
-                //     return parent.apply(this, arguments)
-                // })
-            }
-
-            // Add static properties to the constructor function, if supplied.
-            _.extend(child, parent, staticProps)
-
-            // Set the prototype chain to inherit from `parent`, without calling
-            // `parent`'s constructor function.
-            var Surrogate = function() {
-                this.constructor = child
-            }
-            Surrogate.prototype = parent.prototype
-            child.prototype = new Surrogate()
-
-            // Add prototype properties (instance properties) to the subclass,
-            // if supplied.
-            if (protoProps) _.extend(child.prototype, protoProps)
-
-            // Set a convenience property in case the parent's prototype is needed
-            // later.
-            child.__super__ = parent.prototype
-
-            child.extend = Base.extend
-
-            return child
-        }
+        Base.extend = extend
 
         return Base
     }

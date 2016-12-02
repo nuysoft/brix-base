@@ -21,6 +21,8 @@
   "devDependencies": {
     "gulp": "*",
     "gulp-jshint": "*",
+    "gulp-mocha": "^1.1.1",
+    "gulp-mocha-phantomjs": "*",
     "gulp-requirejs": "*",
     "gulp-uglify": "^1.2.0",
     "jshint-stylish": "*",
