@@ -14,6 +14,7 @@ define(['./util'], function(_) {
 
 		// 子类 Subclass
 		var child = function() {
+			constructor.__x_created_with = child.__x_created_with
 			var instance = constructor.apply(this, arguments) || this
 
 			// instance.options vs parameter options 
